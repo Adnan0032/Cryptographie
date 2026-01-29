@@ -63,3 +63,52 @@ print(f"Message chiffré (hex) : {message_chiffre.hex()[:50]}...")
     * À chaque étape, observez les logs dans le terminal : vous verrez les certificats s'échanger et les signatures se vérifier.
     * Utilisez les données de test pré-remplies dans le formulaire d'achat.
 4. **Analyse** : À l'étape 7, notez que le marchand reçoit une preuve de paiement mais ne peut pas voir votre numéro de carte, car celui-ci est chiffré pour la banque uniquement.
+
+## Ressources et References
+
+Pour approfondir la compréhension du protocole SET et des mécanismes de cryptographie appliquée, les ressources suivantes sont recommandées.
+
+### 1. Documentations Officielles et Standards
+* **SET Specification (Book 1-3)** : Les documents originaux de Visa et MasterCard décrivant les spécifications techniques, les protocoles de messages et les architectures de certificats.
+* **RFC 2828** : Glossaire de la sécurité Internet pour comprendre la terminologie des PKI (Public Key Infrastructure).
+* **RFC 3447** : Public-Key Cryptography Standards (PKCS) #1: RSA Cryptography Specifications.
+
+### 2. Litterature Academique
+* **Applied Cryptography** (Bruce Schneier) : La référence pour comprendre l'implémentation des algorithmes RSA et la gestion des clés.
+* **Cryptography and Network Security** (William Stallings) : Analyse détaillée des protocoles de paiement et des couches de transport sécurisées.
+* **The SET Standard & E-Commerce Security** : Articles de recherche sur l'évolution de SET vers 3-D Secure.
+
+### 3. Outils et Bibliotheques
+* **PyCryptodome Documentation** : [https://pycryptodome.readthedocs.io/](https://pycryptodome.readthedocs.io/) - Documentation officielle pour comprendre les implémentations de `PKCS1_OAEP` et `RSA`.
+* **Flask Documentation** : [https://flask.palletsprojects.com/](https://flask.palletsprojects.com/) - Pour la gestion des sessions et du routage HTTP.
+* **OpenSSL Guide** : Pour comparer l'implémentation Python avec les outils de ligne de commande standard de l'industrie.
+
+---
+
+## Comparaison Technique : SET vs SSL/TLS
+
+| Caracteristique | Protocole SSL/TLS (Standard actuel) | Protocole SET (Ce projet) |
+| :--- | :--- | :--- |
+| **Authentification** | Client optionnel, Serveur obligatoire | Client, Marchand et Banque obligatoires |
+| **Confidentialite** | Le marchand voit le numero de carte | Le marchand ne voit jamais le numero de carte |
+| **Complexite** | Faible a moderee | Elevee (multiples signatures) |
+| **Non-repudiation** | Non garantie nativement | Garantie par signatures numeriques fortes |
+
+
+
+---
+
+## Glossaire Technique pour le Projet
+
+* **PAN (Primary Account Number)** : Le numéro de la carte bancaire, ici chiffré via RSA.
+* **Double Signature** : Concept clé de SET liant les informations de commande et les informations de paiement sans les révéler à la mauvaise partie.
+* **Enveloppe Numerique** : Combinaison de données chiffrées avec une clé symétrique, elle-même chiffrée par une clé publique.
+* **Acquereur** : L'institution financière (banque) qui traite les paiements pour le marchand.
+
+---
+
+## Comment Contribuer
+Si vous souhaitez améliorer ce projet pédagogique :
+1. Examinez les issues pour les améliorations de l'interface.
+2. Proposez des implémentations pour la gestion des **Certificats X.509** réels.
+3. Ajoutez des tests unitaires pour valider les échanges de signatures.
