@@ -10,51 +10,111 @@
 **Implémentation complète du protocole SET avec cryptographie réelle et interface web interactive**
 
 [Présentation](#-présentation) • [Installation](#️-installation-rapide) • [Fonctionnalités](#-fonctionnalités) • [Utilisation](#-utilisation) • [Contribuer](#-contribuer)
+## Présentation du Projet
 
-# Protocole SET - Demonstration Pedagogique
+Ce projet est une implémentation logicielle à visée éducative du protocole **Secure Electronic Transaction (SET)**. Développé initialement par Visa et MasterCard, le protocole SET est un standard de sécurité conçu pour protéger les transactions par carte de paiement sur les réseaux ouverts comme Internet.
 
-## Presentation
+L'application simule les interactions entre le détenteur de carte (Client), le commerçant (Merchant) et la banque (Acquirer) en utilisant des algorithmes de cryptographie asymétrique réels.
 
-Ce projet propose une implementation complete et pedagogique du protocole **Secure Electronic Transaction (SET)**. Ce standard, developpe par Visa et MasterCard, constitue une reference historique dans la securisation des transactions de paiement electronique via une infrastructure a cles publiques (PKI).
+## Objectifs Pédagogiques
 
-L'application demontre les 11 etapes du protocole, en integrant une couche cryptographique reelle (RSA 2048 bits et SHA-256) pour illustrer les echanges entre le client, le marchand et l'acquereur.
-
-## Objectifs de l'Application
-
-* **Analyse de Flux** : Visualiser les echanges de donnees entre les trois parties prenantes du modele SET.
-* **Mise en Pratique Cryptographique** : Experimenter le chiffrement asymetrique, les signatures numeriques et le hachage.
-* **Securite des Donnees** : Comprendre le principe de l'enveloppe numerique et du chiffrement du numero de carte (PAN).
+* **Compréhension des Flux** : Visualiser les 11 étapes clés du processus de paiement sécurisé.
+* **Cryptographie Pratique** : Manipulation de clés RSA 2048 bits, de signatures numériques et de fonctions de hachage SHA-256.
+* **Concepts de Sécurité** : Étude de l'enveloppe numérique, de la double signature et de l'infrastructure à clés publiques (PKI).
 
 ## Architecture Technique
 
-### Pile Logicielle
-* **Serveur Applicatif** : Python 3.8+ utilisant le micro-framework Flask.
-* **Moteur Cryptographique** : Bibliotheque PyCryptodome (RSA 2048, PKCS1 OAEP, SHA-256).
-* **Interface Utilisateur** : HTML5 / Bootstrap 5 pour une navigation etape par etape.
+### Technologies Employées
 
-### Structure du Projet
-```text
+* **Backend** : Python 3.8+ avec le framework Flask pour l'orchestration des requêtes.
+* **Sécurité** : PyCryptodome pour la gestion des opérations cryptographiques.
+* **Frontend** : HTML5 et Bootstrap 5 pour une interface utilisateur structurée.
+
+### Structure du Répertoire
 set-protocol-demo/
-├── app.py                # Logique serveur et orchestration des 11 etapes
-├── requirements.txt      # Dependances Python (Flask, PyCryptodome)
-├── templates/            # Interface utilisateur (12 fichiers HTML)
-│   ├── index.html        # Tableau de bord principal
-│   └── etape1_11.html    # Vues detaillees par etape
-└── static/               # Fichiers CSS et JavaScript
-Installation et LancementPrerequisEnvironnement Python 3.8 ou superieur.Gestionnaire de paquets pip.Procedure d'installationClonage du depotBashgit clone [https://github.com/votre-username/set-protocol-demo.git](https://github.com/votre-username/set-protocol-demo.git)
-cd set-protocol-demo
-Configuration de l'environnement virtuelBashpython -m venv venv
-# Sous Windows
-venv\Scripts\activate
-# Sous Linux/Mac
-source venv/bin/activate
-Installation des dependancesBashpip install Flask==2.3.2 pycryptodome==3.18.0
-ExecutionBashpython app.py
-L'interface est accessible via l'adresse locale : http://localhost:5000Fonctionnalites et Etapes du ProtocoleWorkflow des 11 EtapesL'application decompose le protocole SET selon l'ordre officiel :Demande de certificat : Generation des cles RSA 2048.Emission : Signature du certificat par l'Autorite de Certification.Initialisation : Configuration de l'operateur SET.Envoi Banque : Transmission de l'enveloppe numerique.Verification : Controle de l'integrite et des signatures.Certification : Validation de l'identite du porteur.Demande d'achat : Chiffrement du PAN et des donnees de commande.Phase d'Achat : Processus d'autorisation et de capture.Gestion MEC : Traitement des messages d'erreur et aide solidaire.Enquete de Crise : Surveillance anti-fraude et monitoring.Confirmation : Cloture de la transaction et archivage.Exemple d'Implementation CryptographiquePythonfrom Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_OAEP
+├── app.py                    # Logique serveur et moteur cryptographique
+├── requirements.txt          # Dépendances logicielles
+├── templates/                # Interface utilisateur
+│   ├── index.html            # Menu principal
+│   └── etape[1-11].html      # Vues détaillées de chaque phase
+└── static/                   # Ressources statiques (CSS/JS)
+I
+nstallation et Mise en Route
+Prérequis
+Python version 3.8 ou supérieure.
 
-# Exemple de chiffrement utilise dans le module
-key = RSA.generate(2048)
-cipher = PKCS1_OAEP.new(key.publickey())
-encrypted_data = cipher.encrypt(b"Donnees Sensibles")
-Specifications de l'APIEndpointMethodeAction/api/creer_operateurPOSTInitialise les parametres de session SET./api/envoyer_banquePOSTTransmet les donnees a l'entite acquereur./api/demander_achatPOSTExecute la demande d'autorisation d'achat./api/statusGETRecupere l'etat actuel du workflow.Avertissements de SecuriteUsage Pedagogique Uniquement : Ce projet est une simulation. Il ne doit en aucun cas etre utilise pour traiter de veritables paiements.Donnees de Test : N'utilisez jamais de vrais numeros de carte bancaire (PAN) ou donnees personnelles lors des tests.Production : Le serveur de developpement Flask n'est pas adapte pour une exposition sur un reseau public.LicenceCe projet est sous licence MIT.Contact et ContributionAuteur : Votre Nom / @votre-usernameContributions : Les Pull Requests sont les bienvenues pour l'ajout de tests unitaires ou l'amelioration de l'interface.
+Gestionnaire de paquets pip.
+
+Procédure d'installation
+Clonage du dépôt
+
+git clone https://github.com/votre-username/set-protocol-demo.git
+cd set-protocol-demo
+Configuration de l'environnement
+
+python -m venv venv
+# Activation (Windows)
+venv\Scripts\activate
+# Activation (Linux/Mac)
+source venv/bin/activate
+Installation des bibliothèques
+
+pip install Flask==2.3.2 pycryptodome==3.18.0
+Lancement de l'application
+
+python app.py
+L'application sera disponible à l'adresse : http://localhost:5000
+
+Fonctionnalités Implémentées
+Workflow SET (11 Étapes)
+
+Demande de certificat : Génération de la paire de clés RSA.
+
+Émission : Signature du certificat par l'Autorité de Certification (CA).
+
+Initialisation : Paramétrage de l'opérateur de transaction.
+
+Envoi Banque : Transmission de la demande d'autorisation à l'acquéreur.
+
+Vérification : Contrôle de l'intégrité des messages et des certificats.
+
+Certification : Validation de l'identité des intervenants.
+
+Demande d'achat : Chiffrement du PAN et des données de commande.
+
+Phase d'Achat : Processus d'autorisation et de capture des fonds.
+
+Gestion MEC : Traitement des messages d'erreur et aide solidaire.
+
+Enquête de Crise : Surveillance anti-fraude et monitoring des risques.
+
+Confirmation : Clôture de la transaction et archivage des preuves.
+
+Spécifications de l'API
+Méthode	Endpoint	Action
+POST	/api/creer_operateur	Initialise les paramètres de session SET
+POST	/api/envoyer_banque	Transmet l'enveloppe numérique à l'acquéreur
+POST	/api/demander_achat	Soumet la requête d'autorisation finale
+GET	/api/status	Récupère l'état actuel du workflow
+Sécurité et Confidentialité
+Cryptographie Réelle
+Contrairement à une simple simulation visuelle, ce projet utilise des primitives cryptographiques standards :
+
+RSA 2048 : Pour l'échange de clés et la signature.
+
+PKCS1 OAEP : Pour le remplissage (padding) lors du chiffrement.
+
+SHA-256 : Pour garantir l'intégrité des messages.
+
+Avertissements
+Environnement de Test : Ce code est destiné à un usage local uniquement.
+
+Données Sensibles : Ne saisissez jamais de vrais numéros de carte bancaire. Utilisez les données de test fournies dans l'interface.
+
+Production : Le serveur Flask intégré n'est pas sécurisé pour une exposition publique.
+
+Licence
+Ce projet est distribué sous la licence MIT.
+
+Contact
+Développement initial par Adnane Ammi Douah- adnanammidouah@gmail.com
