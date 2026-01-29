@@ -15,7 +15,6 @@ Pour faire fonctionner ce projet, vous devez disposer d'un environnement Python 
 ### Installation via terminal
 pip install Flask==2.3.2 pycryptodome==3.18.0
 
-# Cellule 3 (Markdown) : Explication des 11 étapes
 
 ## 2. Les 11 Étapes du Protocole SET
 
