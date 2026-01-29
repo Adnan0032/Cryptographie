@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Client - Interface{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>🏦 Interface Client - Protocole SET</h2>
+        <p class="lead">Effectuez des transactions sécurisées avec le protocole SET</p>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Étape 1 & 2: Certification</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nom du Client</label>
+                            <input type="text" class="form-control" id="client-name" value="Jean Dupont">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="client-email" value="jean.dupont@email.com">
+                        </div>
+                        <button class="btn btn-primary w-100" onclick="demanderCertification()">
+                            Demander un Certificat
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5>Étape 3: Créer une Transaction</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                     <label class="form-label">Numéro de Carte (PAN)</label>
+                                     <input type="text" class="form-control" id="pan-number" 
+                                                placeholder="XXXX XXXX XXXX XXXX"
+                                                        autocomplete="off" 
+                                                                        data-lpignore="true"></div>
+                                <input type="text" class="form-control" id="pan-number" 
+       name="payment_info"  
+       pattern="[0-9]{16}" 
+       title="16 chiffres de la carte">
+
+
+                                    <label class="form-label">Montant (€)</label>
+                                    <input type="number" class="form-control" id="transaction-amount" value="150">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Marchand</label>
+                                    <input type="text" class="form-control" id="merchant" value="Amazon FR">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date d'expiration</label>
+                                    <input type="text" class="form-control" id="expiry-date" value="12/25">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="certificate-info" class="alert alert-info d-none">
+                            <strong>Certificat disponible:</strong> 
+                            <span id="cert-id"></span>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button class="btn btn-success" id="btn-create-set" disabled onclick="creerTransactionSET()">
+                                Créer Opérateur SET
+                            </button>
+                            <button class="btn btn-warning" id="btn-send-request" disabled onclick="envoyerRequete()">
+                                Envoyer à la Banque
+                            </button>
+                            <button class="btn btn-danger" id="btn-request-payment" disabled onclick="demanderAchat()">
+                                Demander Achat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h5>Journal des Transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="terminal" id="transaction-log">
+                            > Système SET initialisé<br>
+                            > En attente d'actions...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Processus de Transaction SET</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress mb-3">
+                            <div class="progress-bar" id="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        
+                        <div class="row text-center">
+                            <div class="col step">
+                                <div class="step-circle" data-step="1">1</div>
+                                <div class="step-label">Demande Certificat</div>
+                            </div>
+                            <div class="col step">
+                                <div class="step-circle" data-step="2">2</div>
+                                <div class="step-label">Certificat Émis</div>
+                            </div>
+                            <div class="col step">
+                                <div class="step-circle" data-step="3">3</div>
+                                <div class="step-label">Opérateur SET</div>
+                            </div>
+                            <div class="col step">
+                                <div class="step-circle" data-step="4">4</div>
+                                <div class="step-label">Envoi Requête</div>
+                            </div>
+                            <div class="col step">
+                                <div class="step-circle" data-step="5">5</div>
+                                <div class="step-label">Vérification</div>
+                            </div>
+                            <div class="col step">
+                                <div class="step-circle" data-step="7">7</div>
+                                <div class="step-label">Demande Achat</div>
+                            </div>
+                            <div class="col step">
+                                <div class="step-circle" data-step="11">11</div>
+                                <div class="step-label">Confirmation</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button class="btn btn-lg btn-primary" onclick="executerTransactionComplete()">
+                                🚀 Exécuter Transaction Complète
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ddd;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.step-circle.active {
+    background-color: #0d6efd;
+    color: white;
+    transform: scale(1.1);
+}
+
+.step-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.step {
+    padding: 10px;
+}
+</style>
+
+<script src="{{ url_for('static', filename='js/client.js') }}"></script>
+{% endblock %}

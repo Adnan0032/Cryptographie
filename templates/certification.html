@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Certification - Interface{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>🔐 Autorité de Certification SET</h2>
+        <p class="lead">Émission et gestion des certificats numériques</p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Étape 2: Émission de Certificats</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Autorité de Certification</label>
+                            <input type="text" class="form-control" value="SET-CA-ROOT" readonly>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Algorithme de Signature</label>
+                            <input type="text" class="form-control" value="RSA 2048 + SHA256" readonly>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Standard de Certificat</label>
+                            <input type="text" class="form-control" value="X.509 SET (Personnalisé)" readonly>
+                        </div>
+                        
+                        <div id="pending-requests">
+                            <h6>Demandes en attente:</h6>
+                            <div class="list-group" id="request-list">
+                                <!-- Demandes seront ajoutées ici -->
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-3">
+                            <button class="btn btn-primary" onclick="emettreCertificat()">
+                                Émettre Certificat
+                            </button>
+                            <button class="btn btn-success" onclick="genererCertificatTest()">
+                                Générer Certificat Test
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h5>Gestion des Certificats</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">ID Certificat</label>
+                            <input type="text" class="form-control" id="certificate-id">
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-info" onclick="verifierCertificat()">
+                                Vérifier Certificat
+                            </button>
+                            <button class="btn btn-danger" onclick="revoquerCertificat()">
+                                Révoquer Certificat
+                            </button>
+                            <button class="btn btn-secondary" onclick="renouvelerCertificat()">
+                                Renouveler Certificat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5>Détails du Certificat</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="certificate-details">
+                            <div class="alert alert-info">
+                                Sélectionnez un certificat pour voir les détails
+                            </div>
+                            
+                            <div class="d-none" id="certificate-display">
+                                <h6>Informations du Certificat:</h6>
+                                <table class="table table-sm">
+                                    <tbody id="certificate-table">
+                                        <!-- Détails seront ajoutés ici -->
+                                    </tbody>
+                                </table>
+                                
+                                <h6 class="mt-3">Clé Publique (PEM):</h6>
+                                <div class="bg-light p-3 rounded" style="max-height: 150px; overflow-y: auto;">
+                                    <code id="public-key-display"></code>
+                                </div>
+                                
+                                <div class="alert alert-success mt-3" id="certificate-status">
+                                    <!-- Statut du certificat -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h5>Signature Digitale SET</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Processus de Signature</label>
+                            <div class="alert alert-dark">
+                                <strong>Signature = Hach(DS) + Issuer(PS) chiffrée Kp</strong><br>
+                                <small>Où DS: Données Signées, PS: Paramètres SET, Kp: Clé Privée CA</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6>Chiffrement RSA:</h6>
+                            <ul class="list-group">
+                                <li class="list-group-item">RSA 2048 bits</li>
+                                <li class="list-group-item">Padding: PKCS#1 OAEP</li>
+                                <li class="list-group-item">Hash: SHA-256</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6>Vérification:</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="verify-structure" checked>
+                                <label class="form-check-label" for="verify-structure">
+                                    Structure SET valide
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="verify-signature" checked>
+                                <label class="form-check-label" for="verify-signature">
+                                    Signature digitale valide
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="verify-expiry" checked>
+                                <label class="form-check-label" for="verify-expiry">
+                                    Certificat non expiré
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Registre des Certificats Émis</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="certificate-registry">
+                                <thead>
+                                    <tr>
+                                        <th>ID Certificat</th>
+                                        <th>Client ID</th>
+                                        <th>Date Émission</th>
+                                        <th>Expiration</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="certificate-registry-body">
+                                    <!-- Certificats seront ajoutés ici -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-primary" onclick="rafraichirRegistre()">
+                                Rafraîchir Registre
+                            </button>
+                            <button class="btn btn-danger" onclick="simulerCompromission()">
+                                Simuler Compromission
+                            </button>
+                            <button class="btn btn-warning" onclick="genererRapport()">
+                                Générer Rapport
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Journal de l'Autorité de Certification</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="terminal" id="ca-log">
+                            > Autorité de Certification SET initialisée<br>
+                            > Clé Racine RSA 2048 bits générée<br>
+                            > En attente de demandes...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/certification.js') }}"></script>
+{% endblock %}

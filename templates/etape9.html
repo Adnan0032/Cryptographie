@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Étape 9 - SET</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        .card-hover:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .mec-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="container mt-4">
+    <div class="card">
+        <div class="card-header text-white" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+            <h4><i class="bi bi-shield-check"></i> Étape 9: Aide Solidaire + MEC</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <h5><i class="bi bi-info-circle"></i> MEC = Message d'Échange de Cartes</h5>
+                <p>Phase de traitement systémique après l'autorisation de paiement.</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card card-hover mb-3">
+                        <div class="card-header bg-primary text-white">
+                            <h6><i class="bi bi-people-fill"></i> Aide Solidaire</h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Fonction:</strong> Support technique et assistance</p>
+                            <ul>
+                                <li>Gestion des erreurs de transaction</li>
+                                <li>Support client 24/7</li>
+                                <li>Résolution des conflits</li>
+                                <li>Assurance transaction</li>
+                            </ul>
+                            
+                            <div class="alert alert-warning">
+                                <small><i class="bi bi-exclamation-triangle"></i> 
+                                En cas de problème, l'aide solidaire intervient pour garantir la complétion de la transaction.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card card-hover mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h6><i class="bi bi-envelope-fill"></i> MEC - Message Exchange Card</h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Fonction:</strong> Échange de messages standardisés</p>
+                            <ul>
+                                <li>Formatage des messages SET</li>
+                                <li>Validation syntaxique</li>
+                                <li>Routage vers systèmes appropriés</li>
+                                <li>Gestion des accusés de réception</li>
+                            </ul>
+                            
+                            <div class="mt-3 p-3 mec-box">
+                                <h6><i class="bi bi-cpu"></i> Format MEC SET :</h6>
+                                <code style="color: white;">
+MEC SET v1.0<br>
+Type: Transaction<br>
+ID: {{ session.get('transaction_id', 'TXN-XXXXXX') }}<br>
+Statut: PROCESSING<br>
+Timestamp: {{ session.get('timestamp', '') }}
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header bg-secondary text-white">
+                    <h6><i class="bi bi-gear"></i> Simulation du Traitement MEC</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <div class="p-3 border rounded mb-2 bg-light">
+                                <i class="bi bi-arrow-right-circle fs-1 text-primary"></i>
+                                <h6 class="mt-2">Message Entrant</h6>
+                                <small>Transaction autorisée</small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 text-center">
+                            <div class="p-3 border rounded mb-2 bg-light">
+                                <i class="bi bi-cpu fs-1 text-warning"></i>
+                                <h6 class="mt-2">Traitement MEC</h6>
+                                <small>Validation + Formatage</small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 text-center">
+                            <div class="p-3 border rounded mb-2 bg-light">
+                                <i class="bi bi-check-circle fs-1 text-success"></i>
+                                <h6 class="mt-2">Message Sortant</h6>
+                                <small>Prêt pour phase 10</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <button class="btn btn-outline-primary" onclick="simulerMEC()">
+                            <i class="bi bi-play-circle"></i> Simuler le Traitement MEC
+                        </button>
+                    </div>
+                    
+                    <div id="mec-result" class="mt-3 p-3 bg-dark text-light rounded" style="display: none;">
+                        <pre id="mec-output" class="mb-0"></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-success mt-4">
+                <h6><i class="bi bi-check-circle"></i> Résultat de l'Étape 9 :</h6>
+                <p>Le MEC a formaté et validé la transaction. L'aide solidaire est prête à intervenir si nécessaire.</p>
+                <p>La transaction passe maintenant à l'étape 10 : Enquête de crise.</p>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/etape8" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Étape 8
+                </a>
+                <a href="/etape10" class="btn btn-primary">
+                    Suivant <i class="bi bi-arrow-right"></i> Étape 10
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    function simulerMEC() {
+        const steps = [
+            "📥 Réception transaction autorisée...",
+            "🔍 Vérification format SET...",
+            "✅ Format valide",
+            "🔐 Vérification sécurité MEC...",
+            "✅ Sécurité OK",
+            "🔄 Formatage message MEC...",
+            "✉️  Génération message :",
+            "",
+            "=== MEC SET MESSAGE ===",
+            "Version: SET-MEC/1.0",
+            "Type: TRANSACTION_PROCESSING",
+            `Transaction: ${"{{ session.get('transaction_id', 'TXN-XXXXXX') }}"}`, 
+            "Status: FORMATTED",
+            "Timestamp: " + new Date().toISOString(),
+            "Signature: MEC-SIG-" + Math.random().toString(36).substr(2, 8).toUpperCase(),
+            "=====================",
+            "",
+            "📤 Envoi vers système d'enquête...",
+            "✅ MEC traitement terminé"
+        ];
+        
+        const output = document.getElementById('mec-output');
+        const resultDiv = document.getElementById('mec-result');
+        resultDiv.style.display = 'block';
+        output.innerHTML = '';
+        
+        // Afficher étape par étape
+        let i = 0;
+        function nextStep() {
+            if (i < steps.length) {
+                output.innerHTML += steps[i] + '\n';
+                resultDiv.scrollTop = resultDiv.scrollHeight;
+                i++;
+                setTimeout(nextStep, 500);
+            }
+        }
+        nextStep();
+    }
+    </script>
+</body>
+</html>

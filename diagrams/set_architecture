@@ -1,0 +1,68 @@
+// Architecture SET Banking
+digraph {
+	rankdir=LR size="12,8"
+	node [fillcolor=lightblue shape=box style=filled]
+	subgraph cluster_frontend {
+		color=black fillcolor=lightgrey label="Frontend Web" style=filled
+		UI_Client [label="Interface Client
+(React/HTML/JS)"]
+		UI_Banque [label="Interface Banque
+(Dashboard)"]
+		UI_CA [label="Interface Certification
+(Admin)"]
+		color=invis
+	}
+	subgraph cluster_backend {
+		color=black fillcolor=lightyellow label="Backend Flask" style=filled
+		Flask_App [label="Application Flask
+(Gestion API)"]
+		API_SET [label="API SET Protocol
+(Endpoints REST)"]
+		Auth_Service [label="Service d'Authentification"]
+		color=invis
+	}
+	subgraph cluster_modules {
+		color=black fillcolor=lightgreen label="Modules SET" style=filled
+		Crypto_Module [label="Module Cryptographique
+(RSA, Signatures)"]
+		SET_Protocol [label="Module SET Protocol
+(Logique Métier)"]
+		Models [label="Modèles de Données
+(Client, Banque, CA)"]
+		color=invis
+	}
+	subgraph cluster_database {
+		color=black fillcolor=pink label=Stockage style=filled
+		Session_Store [label="Session Store
+(Flask Session)"]
+		Key_Store [label="Key Store
+(Clés RSA)"]
+		Cert_Store [label="Certificat Store
+(Base de Certificats)"]
+		color=invis
+	}
+	UI_Client -> API_SET [label="HTTP/HTTPS
+(JSON)"]
+	UI_Banque -> API_SET [label="WebSocket/HTTP"]
+	UI_CA -> API_SET [label="REST API"]
+	API_SET -> Flask_App [label=Routing]
+	Flask_App -> Crypto_Module [label="Appel Cryptographique"]
+	Flask_App -> SET_Protocol [label="Logique SET"]
+	Flask_App -> Models [label="ORM/Manipulation"]
+	Crypto_Module -> Key_Store [label="Stockage Clés"]
+	SET_Protocol -> Cert_Store [label="Gestion Certificats"]
+	Flask_App -> Session_Store [label="Session Management"]
+	Models -> Session_Store [label=Persistance]
+	Web_Browser [label="Navigateur Web
+(HTTPS/TLS)" fillcolor=orange shape=ellipse]
+	Bank_API [label="API Bancaire Réelle
+(Système Externe)" fillcolor=red shape=ellipse style=filled]
+	Web_Browser -> UI_Client [label="Interface Utilisateur"]
+	API_SET -> Bank_API [label="Intégration
+(Paiements Réels)" style=dashed]
+	label="
+
+Architecture Application SET Banking
+(Protocole SET Complet)"
+	fontsize=20
+}

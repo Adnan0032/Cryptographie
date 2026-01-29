@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Banque - Interface{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>🏛️ Interface Banque - Protocole SET</h2>
+        <p class="lead">Gestion des transactions et vérifications SET</p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Étape 5 & 6: Vérifications</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <strong>Banque:</strong> Crédit Agricole (CA)<br>
+                            <strong>Code:</strong> 12345-SET
+                        </div>
+                        
+                        <div id="pending-transactions">
+                            <h6>Transactions en attente:</h6>
+                            <div class="list-group" id="transaction-list">
+                                <!-- Transactions seront ajoutées ici -->
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-primary w-100" onclick="verifierTransaction()">
+                                Vérifier Structure & Chiffrement
+                            </button>
+                            <button class="btn btn-success w-100 mt-2" onclick="validerCertificat()">
+                                Valider Certificat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h5>Étape 8: Achat en 2 Phases</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">ID Transaction</label>
+                            <input type="text" class="form-control" id="bank-transaction-id">
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-warning" onclick="autoriserPaiement()">
+                                Phase 1: Autorisation
+                            </button>
+                            <button class="btn btn-danger" onclick="capturerPaiement()">
+                                Phase 2: Capture
+                            </button>
+                        </div>
+                        
+                        <div id="authorization-result" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5>Étape 9 & 10: Gestion Système</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6>Aide Solidaire + MEC</h6>
+                            <button class="btn btn-info w-100 mb-2" onclick="gererAideSolidaire()">
+                                Gérer Aide Solidaire
+                            </button>
+                            
+                            <h6 class="mt-3">Enquête de Crise</h6>
+                            <button class="btn btn-danger w-100" onclick="lancerEnqueteCrise()">
+                                Lancer Enquête
+                            </button>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <h6>Statistiques SET</h6>
+                            <div class="row text-center">
+                                <div class="col">
+                                    <div class="stat-card bg-success text-white p-3 rounded">
+                                        <h3 id="transactions-validees">0</h3>
+                                        <small>Transactions Validées</small>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="stat-card bg-warning text-dark p-3 rounded">
+                                        <h3 id="certificats-verifies">0</h3>
+                                        <small>Certificats Vérifiés</small>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="stat-card bg-danger text-white p-3 rounded">
+                                        <h3 id="erreurs-detection">0</h3>
+                                        <small>Erreurs Détectées</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h5>Étape 11: Confirmation Finale</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="confirmation-area">
+                            <div class="alert alert-warning">
+                                En attente de transaction pour confirmation...
+                            </div>
+                            
+                            <div class="d-none" id="confirmation-ready">
+                                <div class="mb-3">
+                                    <label class="form-label">Message de Confirmation</label>
+                                    <textarea class="form-control" id="confirmation-message" rows="3">
+Transaction SET complétée avec succès.
+Certificat vérifié: OK
+Signature digitale: VALIDE
+Chiffrement RSA: ACTIF
+                                    </textarea>
+                                </div>
+                                
+                                <button class="btn btn-success w-100" onclick="confirmerTransaction()">
+                                    Envoyer Confirmation Finale
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Journal des Activités Bancaires</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="terminal" id="bank-log">
+                            > Système Bancaire SET initialisé<br>
+                            > En attente de transactions SET...
+                        </div>
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-secondary" onclick="clearBankLog()">
+                                Effacer Journal
+                            </button>
+                            <button class="btn btn-primary" onclick="simulerTransaction()">
+                                Simuler Transaction Test
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stat-card {
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.list-group-item {
+    cursor: pointer;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+</style>
+
+<script src="{{ url_for('static', filename='js/banque.js') }}"></script>
+{% endblock %}
