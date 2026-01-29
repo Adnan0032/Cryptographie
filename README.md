@@ -1,120 +1,66 @@
-#  Protocole SET - Démonstration Pédagogique
+# Documentation du Projet : Simulateur du Protocole SET (Secure Electronic Transaction)
 
-<div align="center">
+Ce notebook détaille le fonctionnement, l'architecture et les étapes de l'implémentation pédagogique du protocole SET. Ce projet utilise **Flask** pour l'interface web et **PyCryptodome** pour la couche cryptographique réelle.
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-2.3.2-green?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-[![SET Protocol](https://img.shields.io/badge/Protocole-SET-orange)](https://en.wikipedia.org/wiki/Secure_Electronic_Transaction)
+## Objectif
+L'objectif est de démontrer comment les certificats numériques et le chiffrement asymétrique (RSA) sécurisent une transaction entre un client, un marchand et une banque sans jamais exposer le numéro de carte bancaire au marchand.
 
-**Implémentation complète du protocole SET avec cryptographie réelle et interface web interactive**
+## 1. Prérequis et Installation
 
-[Présentation](#-présentation) • [Installation](#️-installation-rapide) • [Fonctionnalités](#-fonctionnalités) • [Utilisation](#-utilisation) • [Contribuer](#-contribuer)
-## Présentation du Projet
+Pour faire fonctionner ce projet, vous devez disposer d'un environnement Python 3.8+ avec les dépendances suivantes :
 
-Ce projet est une implémentation logicielle à visée éducative du protocole **Secure Electronic Transaction (SET)**. Développé initialement par Visa et MasterCard, le protocole SET est un standard de sécurité conçu pour protéger les transactions par carte de paiement sur les réseaux ouverts comme Internet.
+* **Flask** : Serveur web.
+* **PyCryptodome** : Bibliothèque pour les opérations RSA et SHA-256.
 
-L'application simule les interactions entre le détenteur de carte (Client), le commerçant (Merchant) et la banque (Acquirer) en utilisant des algorithmes de cryptographie asymétrique réels.
-
-## Objectifs Pédagogiques
-
-* **Compréhension des Flux** : Visualiser les 11 étapes clés du processus de paiement sécurisé.
-* **Cryptographie Pratique** : Manipulation de clés RSA 2048 bits, de signatures numériques et de fonctions de hachage SHA-256.
-* **Concepts de Sécurité** : Étude de l'enveloppe numérique, de la double signature et de l'infrastructure à clés publiques (PKI).
-
-## Architecture Technique
-
-### Technologies Employées
-
-* **Backend** : Python 3.8+ avec le framework Flask pour l'orchestration des requêtes.
-* **Sécurité** : PyCryptodome pour la gestion des opérations cryptographiques.
-* **Frontend** : HTML5 et Bootstrap 5 pour une interface utilisateur structurée.
-
-### Structure du Répertoire
-set-protocol-demo/
-├── app.py                    # Logique serveur et moteur cryptographique
-├── requirements.txt          # Dépendances logicielles
-├── templates/                # Interface utilisateur
-│   ├── index.html            # Menu principal
-│   └── etape[1-11].html      # Vues détaillées de chaque phase
-└── static/                   # Ressources statiques (CSS/JS)
-I
-nstallation et Mise en Route
-Prérequis
-Python version 3.8 ou supérieure.
-
-Gestionnaire de paquets pip.
-
-Procédure d'installation
-Clonage du dépôt
-
-git clone https://github.com/votre-username/set-protocol-demo.git
-cd set-protocol-demo
-Configuration de l'environnement
-
-python -m venv venv
-# Activation (Windows)
-venv\Scripts\activate
-# Activation (Linux/Mac)
-source venv/bin/activate
-Installation des bibliothèques
-
+### Installation via terminal
 pip install Flask==2.3.2 pycryptodome==3.18.0
-Lancement de l'application
 
-python app.py
-L'application sera disponible à l'adresse : http://localhost:5000
+# Cellule 3 (Markdown) : Explication des 11 étapes
 
-Fonctionnalités Implémentées
-Workflow SET (11 Étapes)
+## 2. Les 11 Étapes du Protocole SET
 
-Demande de certificat : Génération de la paire de clés RSA.
+Le projet suit rigoureusement le flux standardisé du protocole :
 
-Émission : Signature du certificat par l'Autorité de Certification (CA).
+1.  **Demande de certificat** : Le client génère une paire de clés RSA 2048.
+2.  **Émission** : L'Autorité de Certification (CA) signe et renvoie le certificat.
+3.  **Opérateur SET** : Initialisation du logiciel de paiement côté client.
+4.  **Envoi Banque** : Le client envoie ses informations d'identité à la banque pour vérification.
+5.  **Vérification** : La banque vérifie les signatures numériques reçues.
+6.  **Certification OK** : La banque confirme la validité du certificat client.
+7.  **Demande d'achat** : Le client chiffre son PAN (numéro de carte) avec la clé publique de la banque (Enveloppe numérique).
+8.  **Achat 2 phases** : Autorisation (blocage des fonds) puis Capture (transfert réel).
+9.  **Gestion MEC** : Traitement des messages d'erreurs sécurisés.
+10. **Enquête de crise** : Simulation de la détection de fraude.
+11. **Confirmation** : Reçu final de la transaction.
 
-Initialisation : Paramétrage de l'opérateur de transaction.
+## 3. Aperçu de la logique cryptographique utilisée
 
-Envoi Banque : Transmission de la demande d'autorisation à l'acquéreur.
+Voici comment le projet gère le chiffrement RSA pour sécuriser les données sensibles :
 
-Vérification : Contrôle de l'intégrité des messages et des certificats.
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
 
-Certification : Validation de l'identité des intervenants.
+# 1. Génération des clés
+key = RSA.generate(2048)
+private_key = key.export_key()
+public_key = key.publickey().export_key()
 
-Demande d'achat : Chiffrement du PAN et des données de commande.
+print("Clé publique générée avec succès.")
 
-Phase d'Achat : Processus d'autorisation et de capture des fonds.
+# 2. Simulation de chiffrement d'un PAN (Numéro de carte)
+donnees = b"4242-4242-4242-4242"
+chiffreur = PKCS1_OAEP.new(RSA.import_key(public_key))
+message_chiffre = chiffreur.encrypt(donnees)
 
-Gestion MEC : Traitement des messages d'erreur et aide solidaire.
+print(f"Message chiffré (hex) : {message_chiffre.hex()[:50]}...")
 
-Enquête de Crise : Surveillance anti-fraude et monitoring des risques.
 
-Confirmation : Clôture de la transaction et archivage des preuves.
+## 4. Comment utiliser le projet
 
-Spécifications de l'API
-Méthode	Endpoint	Action
-POST	/api/creer_operateur	Initialise les paramètres de session SET
-POST	/api/envoyer_banque	Transmet l'enveloppe numérique à l'acquéreur
-POST	/api/demander_achat	Soumet la requête d'autorisation finale
-GET	/api/status	Récupère l'état actuel du workflow
-Sécurité et Confidentialité
-Cryptographie Réelle
-Contrairement à une simple simulation visuelle, ce projet utilise des primitives cryptographiques standards :
-
-RSA 2048 : Pour l'échange de clés et la signature.
-
-PKCS1 OAEP : Pour le remplissage (padding) lors du chiffrement.
-
-SHA-256 : Pour garantir l'intégrité des messages.
-
-Avertissements
-Environnement de Test : Ce code est destiné à un usage local uniquement.
-
-Données Sensibles : Ne saisissez jamais de vrais numéros de carte bancaire. Utilisez les données de test fournies dans l'interface.
-
-Production : Le serveur Flask intégré n'est pas sécurisé pour une exposition publique.
-
-Licence
-Ce projet est distribué sous la licence MIT.
-
-Contact
-Développement initial par Adnane Ammi Douah- adnanammidouah@gmail.com
+1. **Lancer le serveur** : Exécutez `python app.py` dans votre terminal.
+2. **Accéder à l'interface** : Allez sur `http://localhost:5000`.
+3. **Suivre le workflow** :
+    * Cliquez sur "Démarrer la transaction".
+    * À chaque étape, observez les logs dans le terminal : vous verrez les certificats s'échanger et les signatures se vérifier.
+    * Utilisez les données de test pré-remplies dans le formulaire d'achat.
+4. **Analyse** : À l'étape 7, notez que le marchand reçoit une preuve de paiement mais ne peut pas voir votre numéro de carte, car celui-ci est chiffré pour la banque uniquement.
