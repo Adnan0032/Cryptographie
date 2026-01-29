@@ -39,14 +39,14 @@ Voici comment le projet gère le chiffrement RSA pour sécuriser les données se
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
-# 1. Génération des clés
+1. Génération des clés
 key = RSA.generate(2048)
 private_key = key.export_key()
 public_key = key.publickey().export_key()
 
 print("Clé publique générée avec succès.")
 
-# 2. Simulation de chiffrement d'un PAN (Numéro de carte)
+2. Simulation de chiffrement d'un PAN (Numéro de carte)
 donnees = b"4242-4242-4242-4242"
 chiffreur = PKCS1_OAEP.new(RSA.import_key(public_key))
 message_chiffre = chiffreur.encrypt(donnees)
@@ -68,20 +68,56 @@ print(f"Message chiffré (hex) : {message_chiffre.hex()[:50]}...")
 
 Pour approfondir la compréhension du protocole SET et des mécanismes de cryptographie appliquée, les ressources suivantes sont recommandées.
 
-### 1. Documentations Officielles et Standards
-* **SET Specification (Book 1-3)** : Les documents originaux de Visa et MasterCard décrivant les spécifications techniques, les protocoles de messages et les architectures de certificats.
-* **RFC 2828** : Glossaire de la sécurité Internet pour comprendre la terminologie des PKI (Public Key Infrastructure).
-* **RFC 3447** : Public-Key Cryptography Standards (PKCS) #1: RSA Cryptography Specifications.
+## Ressources et References sur le Protocole SET
 
-### 2. Litterature Academique
-* **Applied Cryptography** (Bruce Schneier) : La référence pour comprendre l'implémentation des algorithmes RSA et la gestion des clés.
-* **Cryptography and Network Security** (William Stallings) : Analyse détaillée des protocoles de paiement et des couches de transport sécurisées.
-* **The SET Standard & E-Commerce Security** : Articles de recherche sur l'évolution de SET vers 3-D Secure.
+### 1. Documentations de Référence (Standards)
+* **SET Specifications (MasterCard & VISA)** :
+    * *Book 1: Business Description* : Présentation des objectifs commerciaux et du modèle de confiance.
+    * *Book 2: Technical Specification* : Détails des protocoles de messages et des formats de données.
+    * *Book 3: Formal Protocol Definition* : Définition rigoureuse des échanges cryptographiques.
+* **RFC 2828** : "Internet Security Glossary" – Pour comprendre le rôle des autorités de certification (CA) dans SET.
+* **IETF RFC 3537** : "Wrapping Mechanisms for SET" – Détails sur l'encapsulation des clés.
 
-### 3. Outils et Bibliotheques
-* **PyCryptodome Documentation** : [https://pycryptodome.readthedocs.io/](https://pycryptodome.readthedocs.io/) - Documentation officielle pour comprendre les implémentations de `PKCS1_OAEP` et `RSA`.
-* **Flask Documentation** : [https://flask.palletsprojects.com/](https://flask.palletsprojects.com/) - Pour la gestion des sessions et du routage HTTP.
-* **OpenSSL Guide** : Pour comparer l'implémentation Python avec les outils de ligne de commande standard de l'industrie.
+### 2. Études Académiques et Analyses
+* **"The SET Standard & E-Commerce Security"** : Analyse de la structure de la "Double Signature", l'innovation majeure de SET.
+* **Applied Cryptography (Bruce Schneier)** : Section sur les protocoles de paiement électronique pour comprendre pourquoi SET a été conçu comme une alternative plus robuste que SSL/TLS pour le secteur bancaire.
+* **"Analysis of the SET Purchase Protocol"** (Bella, Giampaolo, et al.) : Une étude formelle sur la vérification de la sécurité du protocole.
+
+### 3. Ressources en Ligne
+* **Archives Visa/MasterCard** : Historique du développement du standard (disponible via les archives du Web).
+* **Documentation PyCryptodome** : Pour comprendre l'implémentation pratique des primitives RSA et SHA utilisées dans ce projet.
+
+---
+
+## Focus Technique : Les 11 Etapes du Protocole SET
+
+Le protocole SET est conçu pour garantir qu'aucune information sensible n'est exposée à une partie qui n'en a pas besoin. Voici le détail des phases simulées dans ce projet :
+
+
+
+### Phase d'Initialisation
+1. **Demande de certificat** : Le titulaire de la carte génère ses clés et demande un certificat numérique.
+2. **Émission** : L'Autorité de Certification (CA) valide l'identité et signe le certificat.
+3. **Opérateur SET** : Le portefeuille électronique (Wallet) du client est activé.
+
+### Phase de Transaction
+4. **Envoi Banque** : Le client transmet ses certificats au marchand, qui les relaie à la banque.
+5. **Vérification** : La banque acquéreuse authentifie le client et le marchand via leurs signatures.
+6. **Certification OK** : La banque confirme que toutes les parties sont de confiance.
+
+### Phase de Paiement (L'innovation de la Double Signature)
+7. **Demande d'achat** : Le client envoie au marchand deux informations liées :
+    * Le détail de la commande (lisible par le marchand, mais pas par la banque).
+    * Les informations de paiement (chiffrées pour la banque, invisibles pour le marchand).
+    * *La Double Signature lie ces deux éléments sans en révéler le contenu.*
+8. **Achat 2 phases** : 
+    * *Autorisation* : La banque vérifie les fonds et bloque le montant.
+    * *Capture* : Le transfert réel des fonds est effectué après validation du marchand.
+
+### Phase de Clôture et Support
+9. **Gestion MEC (Message Error Check)** : Protocole de gestion des erreurs de transmission.
+10. **Enquête de Crise** : Procédures de détection de fraude et de gestion des litiges.
+11. **Confirmation** : Envoi du reçu final signé numériquement au client.
 
 ---
 
@@ -98,17 +134,7 @@ Pour approfondir la compréhension du protocole SET et des mécanismes de crypto
 
 ---
 
-## Glossaire Technique pour le Projet
-
-* **PAN (Primary Account Number)** : Le numéro de la carte bancaire, ici chiffré via RSA.
-* **Double Signature** : Concept clé de SET liant les informations de commande et les informations de paiement sans les révéler à la mauvaise partie.
-* **Enveloppe Numerique** : Combinaison de données chiffrées avec une clé symétrique, elle-même chiffrée par une clé publique.
-* **Acquereur** : L'institution financière (banque) qui traite les paiements pour le marchand.
-
----
-
-## Comment Contribuer
-Si vous souhaitez améliorer ce projet pédagogique :
-1. Examinez les issues pour les améliorations de l'interface.
-2. Proposez des implémentations pour la gestion des **Certificats X.509** réels.
-3. Ajoutez des tests unitaires pour valider les échanges de signatures.
+## Glossaire pour le Notebook
+* **Dual Signature (Double Signature)** : Technique permettant de prouver que le paiement est lié à une commande spécifique sans que le marchand voie le numéro de carte, ni que la banque voie le détail des articles achetés.
+* **Merchant Certificate** : Preuve numérique que le marchand est autorisé par une banque à accepter les paiements SET.
+* **Payment Gateway** : L'interface gérée par l'acquéreur qui déchiffre les instructions de paiement du client. 
